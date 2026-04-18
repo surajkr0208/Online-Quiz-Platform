@@ -1,0 +1,108 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ 'Edit Question' if action == 'edit' else 'Add Question' }} — {{ quiz.title }} | Admin{% endblock %}
+
+{% block content %}
+{% set fd = form_data %}
+{% set q = question %}
+
+<div class="admin-page-header">
+  <div>
+    <h1 class="admin-page-title">
+      {{ '✏️ Edit Question' if action == 'edit' else '➕ Add Question' }}
+    </h1>
+    <p class="admin-page-subtitle">
+      {{ quiz.icon }} {{ quiz.title }} · currently {{ quiz.questions|length }} question{{ 's' if quiz.questions|length != 1 else '' }}
+    </p>
+  </div>
+  <a href="{{ url_for('admin_quiz_questions', quiz_id=quiz.id) }}"
+     class="btn btn-secondary" id="q-form-back-btn">← Back to Questions</a>
+</div>
+
+<div class="admin-form-card" style="max-width: 860px;">
+  <form method="POST"
+        action="{{ url_for('admin_edit_question', quiz_id=quiz.id, q_id=question.id) if action == 'edit' else url_for('admin_add_question', quiz_id=quiz.id) }}"
+        id="question-form" novalidate>
+
+    <!-- Question Text -->
+    <div class="form-section-title">Question</div>
+    <div class="form-group">
+      <label for="question">❓ Question Text <span class="req">*</span></label>
+      <textarea class="form-control" id="question" name="question" rows="3"
+                placeholder="Enter your question here..." required maxlength="500">{{ fd.get('question', q.question if q else '') }}</textarea>
+      <p class="form-hint">Be clear and unambiguous. Max 500 characters.</p>
+    </div>
+
+    <!-- Answer Options -->
+    <div class="form-section-title" style="margin-top: 2rem;">Answer Options</div>
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+      Enter all 4 options below, then select the correct answer.
+    </p>
+
+    {% set labels = ['A', 'B', 'C', 'D'] %}
+    {% set option_colors = ['rgba(99,102,241,0.08)', 'rgba(236,72,153,0.08)', 'rgba(251,191,36,0.08)', 'rgba(34,197,94,0.08)'] %}
+
+    <div class="options-form-grid">
+      {% for i in range(4) %}
+      <div class="option-input-row">
+        <div class="option-letter">{{ labels[i] }}</div>
+        <input type="text" class="form-control" id="option_{{ i }}" name="option_{{ i }}"
+               value="{{ fd.get('option_' ~ i, (q.options[i] if q and q.options|length > i else '')) }}"
+               placeholder="Option {{ labels[i] }}" required maxlength="200" />
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Correct Answer -->
+    <div class="form-section-title" style="margin-top: 2rem;">Correct Answer</div>
+    <div class="answer-radio-group">
+      {% for i in range(4) %}
+      {% set is_selected = (fd.get('answer', '') == i|string) or (not fd and q and q.answer == i) or (not fd and not q and i == 0) %}
+      <label class="answer-radio-label" for="answer_{{ i }}">
+        <input type="radio" id="answer_{{ i }}" name="answer" value="{{ i }}"
+               {{ 'checked' if is_selected else '' }} required />
+        Option {{ labels[i] }}
+      </label>
+      {% endfor %}
+    </div>
+    <p class="form-hint" style="margin-top: 0.5rem;">Select which option is the correct answer.</p>
+
+    <!-- Explanation -->
+    <div class="form-section-title" style="margin-top: 2rem;">Explanation</div>
+    <div class="form-group">
+      <label for="explanation">💡 Explanation <span class="req">*</span></label>
+      <textarea class="form-control" id="explanation" name="explanation" rows="3"
+                placeholder="Explain why the correct answer is right. Students see this after answering."
+                required maxlength="500">{{ fd.get('explanation', q.explanation if q else '') }}</textarea>
+      <p class="form-hint">This is shown after the user answers. Keep it informative. Max 500 characters.</p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem;">
+      <button type="submit" class="btn btn-primary" id="q-form-save-btn">
+        {{ '✅ Save Question' if action == 'edit' else '➕ Add Question' }}
+      </button>
+      {% if action == 'add' %}
+      <button type="submit" name="add_another" value="1" class="btn btn-secondary" id="q-form-add-another-btn">
+        ➕ Add & Add Another
+      </button>
+      {% endif %}
+      <a href="{{ url_for('admin_quiz_questions', quiz_id=quiz.id) }}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Live preview: update option letter highlights based on selection
+  document.querySelectorAll('input[name="answer"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      document.querySelectorAll('.answer-radio-label').forEach(label => {
+        label.style.removeProperty('border-color');
+        label.style.removeProperty('background');
+        label.style.removeProperty('color');
+      });
+    });
+  });
+</script>
+{% endblock %}

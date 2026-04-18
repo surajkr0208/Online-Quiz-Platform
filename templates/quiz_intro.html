@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}{{ quiz.title }} — QuizMaster{% endblock %}
+{% block meta_description %}{{ quiz.description }}{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+  <div class="intro-container">
+
+    <a href="{{ url_for('index') }}#quizzes" class="back-link" id="back-to-quizzes" aria-label="Back to quiz library">
+      ← Back to Quizzes
+    </a>
+
+    <article class="intro-card">
+      <!-- Header -->
+      <div class="intro-header">
+        <div class="intro-icon" style="background: {{ quiz.color }}15; border-color: {{ quiz.color }}30;" aria-hidden="true">
+          {{ quiz.icon }}
+        </div>
+        <div>
+          <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+            <span class="badge badge-category">{{ quiz.category }}</span>
+            <span class="badge badge-difficulty badge-{{ quiz.difficulty|lower }}">{{ quiz.difficulty }}</span>
+          </div>
+          <h1 class="intro-title">{{ quiz.title }}</h1>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="intro-description">
+        <p>{{ quiz.description }}</p>
+      </div>
+
+      <!-- Stats -->
+      <div class="intro-stats" role="list" aria-label="Quiz details">
+        <div class="intro-stat" role="listitem">
+          <span class="intro-stat-value">{{ quiz.questions|length }}</span>
+          <span class="intro-stat-label">Questions</span>
+        </div>
+        <div class="intro-stat" role="listitem">
+          <span class="intro-stat-value">{{ quiz.time_per_question }}s</span>
+          <span class="intro-stat-label">Per Question</span>
+        </div>
+        <div class="intro-stat" role="listitem">
+          <span class="intro-stat-value">{{ (quiz.questions|length * quiz.time_per_question // 60) + 1 }}m</span>
+          <span class="intro-stat-label">Est. Duration</span>
+        </div>
+      </div>
+
+      <!-- Rules -->
+      <div class="intro-rules">
+        <p class="rule-title">📋 Quiz Rules</p>
+        <ul class="rule-list">
+          <li>Each question has a <strong>{{ quiz.time_per_question }}-second</strong> time limit.</li>
+          <li>Select your answer before the timer expires.</li>
+          <li>You'll get an <strong>explanation</strong> after each answer.</li>
+          <li>Your full score summary is shown at the end.</li>
+          <li>You can <strong>retake</strong> the quiz as many times as you like.</li>
+        </ul>
+      </div>
+
+      <!-- Actions -->
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <a href="{{ url_for('start_quiz', quiz_id=quiz.id) }}" class="btn btn-primary btn-lg" id="begin-quiz-btn" style="flex: 1; justify-content: center;">
+          🚀 Begin Quiz
+        </a>
+        <a href="{{ url_for('index') }}#quizzes" class="btn btn-secondary btn-lg" id="choose-other-btn" style="flex: 1; justify-content: center;">
+          📚 Choose Another
+        </a>
+      </div>
+    </article>
+
+  </div>
+</div>
+{% endblock %}

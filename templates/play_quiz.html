@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}Q{{ question_number }}/{{ total_questions }} — {{ quiz.title }} | QuizMaster{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+  <div class="quiz-play-container">
+
+    <!-- Header: Question counter + Timer -->
+    <div class="quiz-play-header">
+      <div class="question-counter" aria-live="polite">
+        Question <strong>{{ question_number }}</strong> of {{ total_questions }}
+      </div>
+      <div class="timer-display" id="timerDisplay" role="timer" aria-label="Time remaining">
+        ⏱ <span id="timerValue">{{ quiz.time_per_question }}</span>s
+      </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar-container" role="progressbar" aria-valuenow="{{ progress|int }}" aria-valuemin="0" aria-valuemax="100" aria-label="Quiz progress">
+      <div class="progress-bar-fill" id="progressBar" style="width: {{ progress }}%;"></div>
+    </div>
+
+    <!-- Question Card -->
+    <div class="question-card">
+      <p class="question-text" id="questionText">
+        {{ question.question }}
+      </p>
+    </div>
+
+    <!-- Answer Options -->
+    <div class="options-list" role="group" aria-labelledby="questionText">
+      {% set labels = ['A', 'B', 'C', 'D'] %}
+      {% for i, option in enumerate(question.options) %}
+      <button
+        class="option-btn"
+        id="option-{{ i }}"
+        data-index="{{ i }}"
+        onclick="selectAnswer({{ i }})"
+        aria-label="Option {{ labels[i] }}: {{ option }}">
+        <span class="option-label" aria-hidden="true">{{ labels[i] }}</span>
+        {{ option }}
+      </button>
+      {% endfor %}
+    </div>
+
+    <!-- Feedback Box -->
+    <div class="feedback-box" id="feedbackBox" role="alert" aria-live="polite">
+      <div class="feedback-title" id="feedbackTitle"></div>
+      <div class="feedback-text" id="feedbackText"></div>
+    </div>
+
+    <!-- Next Button -->
+    <div class="quiz-nav-btns">
+      <button class="btn btn-primary" id="nextBtn" onclick="goNext()" style="display: none;" aria-label="Go to next question">
+        Next Question →
+      </button>
+      <a href="{{ url_for('quiz_results', quiz_id=quiz.id) }}" class="btn btn-primary" id="finishBtn" style="display: none;" aria-label="View your results">
+        🏆 View Results
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const QUIZ_ID = "{{ quiz.id }}";
+  const TIME_PER_Q = {{ quiz.time_per_question }};
+  const IS_LAST = {{ 'true' if question_number == total_questions else 'false' }};
+
+  let answered = false;
+  let timerInterval = null;
+  let timeLeft = TIME_PER_Q;
+
+  const timerEl = document.getElementById('timerValue');
+  const timerDisplay = document.getElementById('timerDisplay');
+  const feedbackBox = document.getElementById('feedbackBox');
+  const feedbackTitle = document.getElementById('feedbackTitle');
+  const feedbackText = document.getElementById('feedbackText');
+  const nextBtn = document.getElementById('nextBtn');
+  const finishBtn = document.getElementById('finishBtn');
+
+  // ── Start Timer ─────────────────────────────────────────────────
+  function startTimer() {
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      timerEl.textContent = timeLeft;
+
+      if (timeLeft <= 10) {
+        timerDisplay.classList.add('warning');
+      }
+      if (timeLeft <= 5) {
+        timerDisplay.classList.remove('warning');
+        timerDisplay.classList.add('danger');
+      }
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        if (!answered) {
+          autoTimeout();
+        }
+      }
+    }, 1000);
+  }
+
+  // ── Auto-timeout (no answer selected) ──────────────────────────
+  function autoTimeout() {
+    answered = true;
+    // Submit -1 as timeout
+    fetch(`/quiz/${QUIZ_ID}/answer`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ answer: -1 })
+    })
+    .then(res => res.json())
+    .then(data => {
+      showFeedback(false, data.correct_answer, data.explanation, true);
+      highlightAnswer(data.correct_answer, -1);
+      showNavButton();
+    });
+  }
+
+  // ── Select Answer ───────────────────────────────────────────────
+  function selectAnswer(index) {
+    if (answered) return;
+    answered = true;
+    clearInterval(timerInterval);
+
+    // Disable all buttons
+    document.querySelectorAll('.option-btn').forEach(btn => {
+      btn.disabled = true;
+    });
+
+    fetch(`/quiz/${QUIZ_ID}/answer`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ answer: index })
+    })
+    .then(res => res.json())
+    .then(data => {
+      highlightAnswer(data.correct_answer, index);
+      showFeedback(data.is_correct, data.correct_answer, data.explanation, false);
+      showNavButton();
+    })
+    .catch(() => {
+      console.error('Failed to submit answer');
+    });
+  }
+
+  // ── Highlight correct/incorrect answers ────────────────────────
+  function highlightAnswer(correctIndex, selectedIndex) {
+    const options = document.querySelectorAll('.option-btn');
+    options.forEach((btn, i) => {
+      if (i === correctIndex) {
+        btn.classList.add('correct');
+      } else if (i === selectedIndex && i !== correctIndex) {
+        btn.classList.add('incorrect');
+      }
+    });
+  }
+
+  // ── Show Feedback ───────────────────────────────────────────────
+  function showFeedback(isCorrect, correctIndex, explanation, isTimeout) {
+    feedbackBox.classList.add('show');
+
+    if (isTimeout) {
+      feedbackBox.classList.add('incorrect');
+      feedbackTitle.innerHTML = '⏰ Time\'s Up! Answer revealed.';
+    } else if (isCorrect) {
+      feedbackBox.classList.add('correct');
+      feedbackTitle.innerHTML = '✅ Correct! Well done.';
+    } else {
+      feedbackBox.classList.add('incorrect');
+      feedbackTitle.innerHTML = '❌ Incorrect.';
+    }
+
+    feedbackText.textContent = '💡 ' + explanation;
+  }
+
+  // ── Show Next or Finish Button ──────────────────────────────────
+  function showNavButton() {
+    if (IS_LAST) {
+      finishBtn.style.display = 'inline-flex';
+    } else {
+      nextBtn.style.display = 'inline-flex';
+    }
+  }
+
+  // ── Navigate to Next Question ───────────────────────────────────
+  function goNext() {
+    nextBtn.disabled = true;
+    nextBtn.textContent = 'Loading...';
+    window.location.href = `/quiz/${QUIZ_ID}/play`;
+  }
+
+  // ── Init ────────────────────────────────────────────────────────
+  startTimer();
+</script>
+{% endblock %}

@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}QuizMaster — Test Your Knowledge{% endblock %}
+
+{% block content %}
+
+<!-- ─── Hero ─────────────────────────────────────────────────── -->
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-bg" aria-hidden="true">
+    <div class="hero-blob hero-blob-1"></div>
+    <div class="hero-blob hero-blob-2"></div>
+    <div class="hero-blob hero-blob-3"></div>
+  </div>
+
+  <div class="hero-content fade-in">
+    <div class="hero-badge" aria-label="Platform tag">
+      🐍 Python-Powered Quiz Platform
+    </div>
+
+    <h1 class="hero-title" id="hero-title">
+      Learn, Challenge &<br/>
+      <span class="highlight">Master Any Topic</span>
+    </h1>
+
+    <p class="hero-subtitle">
+      Take customizable quizzes across Programming, Data Science, Web Dev, and more.
+      Get instant feedback, track your score, and climb the leaderboard.
+    </p>
+
+    <div class="hero-actions">
+      <a href="#quizzes" class="btn btn-primary btn-lg" id="hero-browse-btn">
+        🎯 Browse Quizzes
+      </a>
+      <a href="{{ url_for('leaderboard') }}" class="btn btn-secondary btn-lg" id="hero-leaderboard-btn">
+        🏆 Leaderboard
+      </a>
+    </div>
+
+    <div class="hero-stats" aria-label="Platform statistics">
+      <div class="stat-item">
+        <span class="stat-number">{{ quizzes|length }}</span>
+        <span class="stat-label">Quiz Topics</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">{{ total_questions }}</span>
+        <span class="stat-label">Questions</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">3</span>
+        <span class="stat-label">Difficulty Levels</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Quizzes ───────────────────────────────────────────────── -->
+<section class="section" id="quizzes" aria-labelledby="quizzes-title">
+  <div class="section-header">
+    <span class="section-tag">📚 Quiz Library</span>
+    <h2 class="section-title" id="quizzes-title">Choose Your Challenge</h2>
+    <p class="section-subtitle">Pick a topic and start testing your knowledge right now.</p>
+  </div>
+
+  <div class="quiz-grid" role="list">
+    {% for quiz_id, quiz in quizzes.items() %}
+    <a href="{{ url_for('quiz_intro', quiz_id=quiz.id) }}"
+       class="quiz-card animate-on-scroll"
+       role="listitem"
+       aria-label="{{ quiz.title }} quiz — {{ quiz.difficulty }}">
+
+      <div class="quiz-card-top">
+        <div class="quiz-icon-wrapper" style="background: {{ quiz.color }}18;" aria-hidden="true">
+          {{ quiz.icon }}
+        </div>
+        <div class="quiz-meta-badges">
+          <span class="badge badge-category">{{ quiz.category }}</span>
+          <span class="badge badge-difficulty badge-{{ quiz.difficulty|lower }}">{{ quiz.difficulty }}</span>
+        </div>
+      </div>
+
+      <div class="quiz-card-body">
+        <h3 class="quiz-card-title">{{ quiz.title }}</h3>
+        <p class="quiz-card-desc">{{ quiz.description }}</p>
+      </div>
+
+      <div class="quiz-card-footer">
+        <div class="quiz-info-item">
+          <span aria-hidden="true">❓</span>
+          <span>{{ quiz.questions|length }} Questions</span>
+        </div>
+        <div class="quiz-info-item">
+          <span aria-hidden="true">⏱️</span>
+          <span>{{ quiz.time_per_question }}s/Q</span>
+        </div>
+        <div class="start-btn-mini" aria-hidden="true">
+          Start <span>→</span>
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ─── Features ─────────────────────────────────────────────── -->
+<section class="section" aria-labelledby="features-title" style="background: var(--bg-secondary); max-width: 100%; padding: 5rem 0;">
+  <div style="max-width: 1280px; margin: 0 auto; padding: 0 2rem;">
+    <div class="section-header">
+      <span class="section-tag">⚡ Features</span>
+      <h2 class="section-title" id="features-title">Why QuizMaster?</h2>
+      <p class="section-subtitle">Everything you need for an engaging quiz experience.</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card animate-on-scroll">
+        <span class="feature-icon" aria-hidden="true">⏱️</span>
+        <h3 class="feature-title">Timed Challenges</h3>
+        <p class="feature-desc">Every question has a countdown timer to keep you on your toes and simulate real exam conditions.</p>
+      </div>
+
+      <div class="feature-card animate-on-scroll">
+        <span class="feature-icon" aria-hidden="true">💡</span>
+        <h3 class="feature-title">Instant Feedback</h3>
+        <p class="feature-desc">Get detailed explanations for every answer — right or wrong — so you always learn something new.</p>
+      </div>
+
+      <div class="feature-card animate-on-scroll">
+        <span class="feature-icon" aria-hidden="true">📊</span>
+        <h3 class="feature-title">Score Analytics</h3>
+        <p class="feature-desc">See your performance broken down by question with a visual score summary and grade at the end.</p>
+      </div>
+
+      <div class="feature-card animate-on-scroll">
+        <span class="feature-icon" aria-hidden="true">🏆</span>
+        <h3 class="feature-title">Leaderboard</h3>
+        <p class="feature-desc">Compete with other learners and see where you rank on the global leaderboard.</p>
+      </div>
+
+      <div class="feature-card animate-on-scroll">
+        <span class="feature-icon" aria-hidden="true">🎨</span>
+        <h3 class="feature-title">Dark & Light Mode</h3>
+        <p class="feature-desc">Toggle between a beautiful dark mode and a clean light mode — your preference is saved automatically.</p>
+      </div>
+
+      <div class="feature-card animate-on-scroll">
+        <span class="feature-icon" aria-hidden="true">📱</span>
+        <h3 class="feature-title">Fully Responsive</h3>
+        <p class="feature-desc">Works perfectly on desktop, tablet, and mobile devices for learning anytime, anywhere.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

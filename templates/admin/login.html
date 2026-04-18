@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login — QuizMaster</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      const t = localStorage.getItem('quizplatform_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}" />
+</head>
+<body>
+<div class="admin-login-wrapper">
+  <div class="admin-login-card fade-in">
+    <div class="admin-login-logo">
+      <span class="admin-login-icon">🔐</span>
+      <div class="admin-login-title">Admin Panel</div>
+      <div class="admin-login-subtitle">QuizMaster Management</div>
+    </div>
+
+    {% if error %}
+    <div class="flash-messages">
+      <div class="flash-msg error">❌ {{ error }}</div>
+    </div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('admin_login') }}" id="admin-login-form">
+      <div class="form-group">
+        <label for="password">🔑 Admin Password <span class="req">*</span></label>
+        <input type="password" class="form-control" id="password" name="password"
+               placeholder="Enter admin password" required autofocus autocomplete="current-password" />
+      </div>
+      <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;" id="login-submit-btn">
+        Sign In to Admin →
+      </button>
+    </form>
+
+    <p style="text-align: center; margin-top: 1.5rem; font-size: 0.82rem; color: var(--text-muted);">
+      <a href="{{ url_for('index') }}" style="color: var(--accent); text-decoration: none;">← Back to site</a>
+    </p>
+  </div>
+</div>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

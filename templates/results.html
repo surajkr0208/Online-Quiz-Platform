@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Results — {{ quiz.title }} | QuizMaster{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+  <div class="results-container">
+
+    <!-- Results Hero Card -->
+    <div class="results-hero fade-in">
+      <span class="result-grade-icon" aria-hidden="true">{{ grade_icon }}</span>
+      <div class="result-grade-text" style="color: {{ grade_color }};">{{ grade }}</div>
+
+      <!-- Animated Score Circle -->
+      <div class="score-circle" data-pct="{{ percentage }}" style="--pct: 0;" role="img" aria-label="Score: {{ percentage }}%">
+        <div class="score-inner">
+          <span class="score-number" id="scoreDisplay">{{ percentage }}%</span>
+          <span class="score-label">SCORE</span>
+        </div>
+      </div>
+
+      <p class="result-message">{{ message }}</p>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">
+        {{ quiz.title }} • {{ quiz.difficulty }}
+      </p>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="results-stats fade-in" role="list" aria-label="Result statistics">
+      <div class="result-stat-card" role="listitem">
+        <span class="result-stat-value" style="color: var(--success);">{{ score }}</span>
+        <span class="result-stat-label">Correct</span>
+      </div>
+      <div class="result-stat-card" role="listitem">
+        <span class="result-stat-value" style="color: var(--danger);">{{ total - score }}</span>
+        <span class="result-stat-label">Incorrect</span>
+      </div>
+      <div class="result-stat-card" role="listitem">
+        <span class="result-stat-value">{{ total }}</span>
+        <span class="result-stat-label">Total</span>
+      </div>
+    </div>
+
+    <!-- Answer Review -->
+    <div class="answers-review fade-in" aria-labelledby="review-heading">
+      <h2 class="review-title" id="review-heading">📋 Answer Review</h2>
+
+      {% for ans in answers %}
+      <div class="answer-item {{ 'correct' if ans.is_correct else 'incorrect' }}"
+           role="article" aria-label="Question {{ loop.index }} review">
+
+        <div class="answer-question-text">
+          <span class="answer-status-icon" aria-label="{{ '✅ Correct' if ans.is_correct else '❌ Incorrect' }}">
+            {{ '✅' if ans.is_correct else '❌' }}
+          </span>
+          <span>{{ loop.index }}. {{ ans.question }}</span>
+        </div>
+
+        <div class="answer-details">
+          {% if ans.selected >= 0 %}
+          <span class="answer-chip {{ 'chip-correct' if ans.is_correct else 'chip-wrong' }}">
+            Your answer: {{ ans.options[ans.selected] }}
+          </span>
+          {% else %}
+          <span class="answer-chip chip-wrong">No answer — Timed out</span>
+          {% endif %}
+
+          {% if not ans.is_correct %}
+          <span class="answer-chip chip-correct">
+            Correct: {{ ans.options[ans.correct] }}
+          </span>
+          {% endif %}
+        </div>
+
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 8px; line-height: 1.5;">
+          💡 {{ ans.explanation }}
+        </p>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="results-actions fade-in">
+      <a href="{{ url_for('start_quiz', quiz_id=quiz.id) }}" class="btn btn-primary btn-lg" id="retake-quiz-btn">
+        🔁 Retake Quiz
+      </a>
+      <a href="{{ url_for('index') }}#quizzes" class="btn btn-secondary btn-lg" id="more-quizzes-btn">
+        📚 More Quizzes
+      </a>
+      <a href="{{ url_for('leaderboard') }}" class="btn btn-outline btn-lg" id="view-leaderboard-btn">
+        🏆 Leaderboard
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Animate score circle
+  document.addEventListener('DOMContentLoaded', () => {
+    const circle = document.querySelector('.score-circle');
+    if (!circle) return;
+    const pct = parseFloat(circle.getAttribute('data-pct') || 0);
+    let current = 0;
+    const steps = 60;
+    const increment = pct / steps;
+    const duration = 1500;
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= pct) {
+        current = pct;
+        clearInterval(timer);
+      }
+      circle.style.setProperty('--pct', current.toFixed(2));
+    }, duration / steps);
+  });
+</script>
+{% endblock %}

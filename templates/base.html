@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}QuizMaster — Online Quiz Platform{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}QuizMaster is a Python-powered online quiz platform with customizable quizzes, scoring, and a beautiful user interface for education and entertainment.{% endblock %}" />
+
+  <!-- Preconnect for fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Apply theme before render to prevent flash -->
+  <script>
+    (function () {
+      const t = localStorage.getItem('quizplatform_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- ─── Navigation ──────────────────────────────────────────── -->
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <a href="{{ url_for('index') }}" class="nav-brand" aria-label="QuizMaster Home">
+      <div class="nav-logo" aria-hidden="true">🧠</div>
+      <span class="nav-title">QuizMaster</span>
+    </a>
+
+    <ul class="nav-links" role="list">
+      <li><a href="{{ url_for('index') }}" class="{{ 'active' if request.endpoint == 'index' else '' }}" id="nav-home">Home</a></li>
+      <li><a href="{{ url_for('leaderboard') }}" class="{{ 'active' if request.endpoint == 'leaderboard' else '' }}" id="nav-leaderboard">Leaderboard</a></li>
+      <li><a href="{{ url_for('about') }}" class="{{ 'active' if request.endpoint == 'about' else '' }}" id="nav-about">About</a></li>
+      <li><a href="{{ url_for('admin_root') }}" class="{{ 'active' if request.endpoint and request.endpoint.startswith('admin') else '' }}" id="nav-admin">⚙️ Admin</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <!-- Theme Toggle -->
+      <label class="theme-toggle" for="themeToggle" aria-label="Toggle dark/light mode" title="Toggle theme">
+        <input type="checkbox" id="themeToggle" role="switch" aria-checked="false" />
+        <span class="toggle-track" aria-hidden="true"></span>
+        <span class="toggle-thumb" aria-hidden="true"></span>
+      </label>
+
+      <a href="{{ url_for('index') }}#quizzes" class="btn btn-primary btn-sm" id="nav-start-btn">
+        🚀 Start Quiz
+      </a>
+    </div>
+  </nav>
+
+  <!-- ─── Main Content ─────────────────────────────────────────── -->
+  <main id="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ─── Footer ──────────────────────────────────────────────── -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer-content">
+      <div class="footer-logo">🧠 QuizMaster</div>
+      <p class="footer-text">Built with Python & Flask · Designed for learners everywhere</p>
+      <p class="footer-text" style="margin-top: 4px;">© 2024 QuizMaster Platform. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

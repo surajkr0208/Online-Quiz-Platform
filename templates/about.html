@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}About — QuizMaster{% endblock %}
+{% block meta_description %}Learn about QuizMaster — a Python-powered quiz platform built with Flask, featuring customizable quizzes, scoring, and a stunning modern interface.{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+  <div class="about-container">
+
+    <!-- Hero -->
+    <div class="about-hero fade-in">
+      <div style="font-size: 4rem; margin-bottom: 1rem;" aria-hidden="true">🧠</div>
+      <h1 class="about-title">About QuizMaster</h1>
+      <p class="about-subtitle">
+        A Python-powered online quiz platform built to make learning interactive, fun, and rewarding.
+        Built with Flask, designed with care.
+      </p>
+
+      <div class="tech-stack" aria-label="Technology stack">
+        <div class="tech-badge">🐍 Python 3</div>
+        <div class="tech-badge">⚡ Flask</div>
+        <div class="tech-badge">🎨 Vanilla CSS</div>
+        <div class="tech-badge">💾 Sessions</div>
+        <div class="tech-badge">🔌 REST API</div>
+        <div class="tech-badge">📱 Responsive</div>
+        <div class="tech-badge">🌙 Dark Mode</div>
+      </div>
+    </div>
+
+    <!-- Features Grid -->
+    <div class="features-grid" style="margin-bottom: 2rem;">
+      <div class="feature-card animate-on-scroll">
+        <span class="feature-icon" aria-hidden="true">🏗️</span>
+        <h2 class="feature-title">Built with Python & Flask</h2>
+        <p class="feature-desc">
+          The backend is powered by Python 3 and the Flask micro-framework. Routes, session management,
+          and AJAX endpoints are all handled server-side with clean, readable code.
+        </p>
+      </div>
+
+      <div class="feature-card animate-on-scroll">
+        <span class="feature-icon" aria-hidden="true">🎯</span>
+        <h2 class="feature-title">Multiple Quiz Categories</h2>
+        <p class="feature-desc">
+          Choose from Python Basics, Data Science, Web Development, Algorithms,
+          Machine Learning, and General Knowledge — with more categories planned.
+        </p>
+      </div>
+
+      <div class="feature-card animate-on-scroll">
+        <span class="feature-icon" aria-hidden="true">🌓</span>
+        <h2 class="feature-title">Dark & Light Mode</h2>
+        <p class="feature-desc">
+          A fully implemented dark/light theme toggle that persists your preference
+          using localStorage — no flash on reload, smooth transitions throughout.
+        </p>
+      </div>
+
+      <div class="feature-card animate-on-scroll">
+        <span class="feature-icon" aria-hidden="true">⚡</span>
+        <h2 class="feature-title">AJAX-Powered Quizzing</h2>
+        <p class="feature-desc">
+          Answers are submitted via JavaScript fetch API without page reloads,
+          giving an instant, app-like feel with real-time feedback and explanations.
+        </p>
+      </div>
+
+      <div class="feature-card animate-on-scroll">
+        <span class="feature-icon" aria-hidden="true">🔒</span>
+        <h2 class="feature-title">Session-Based State</h2>
+        <p class="feature-desc">
+          Quiz progress, scores, and answers are tracked using Flask's server-side sessions,
+          allowing secure, per-user state without a database.
+        </p>
+      </div>
+
+      <div class="feature-card animate-on-scroll">
+        <span class="feature-icon" aria-hidden="true">📊</span>
+        <h2 class="feature-title">Score & Analytics</h2>
+        <p class="feature-desc">
+          At the end of each quiz, get a detailed breakdown with your score percentage,
+          grade, per-question review, and explanations for every answer.
+        </p>
+      </div>
+    </div>
+
+    <!-- Architecture Box -->
+    <div class="intro-card animate-on-scroll" style="margin-bottom: 2rem;">
+      <h2 class="feature-title" style="font-size: 1.3rem; margin-bottom: 1.25rem;">🏛️ Architecture Overview</h2>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div>
+          <p style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 0.5rem;">Backend</p>
+          <ul class="rule-list">
+            <li>Flask routes for all pages</li>
+            <li>JSON-based quiz data store</li>
+            <li>Session for score tracking</li>
+            <li>REST endpoint for answers</li>
+          </ul>
+        </div>
+        <div>
+          <p style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 0.5rem;">Frontend</p>
+          <ul class="rule-list">
+            <li>Jinja2 HTML templates</li>
+            <li>Vanilla CSS design system</li>
+            <li>AJAX with Fetch API</li>
+            <li>localStorage theme toggle</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="text-center animate-on-scroll">
+      <a href="{{ url_for('index') }}#quizzes" class="btn btn-primary btn-lg" id="about-start-quiz-btn">
+        🚀 Start a Quiz Now
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

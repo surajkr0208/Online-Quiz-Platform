@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Leaderboard — QuizMaster{% endblock %}
+{% block meta_description %}See the top performers on QuizMaster. Compete with learners worldwide and claim your spot on the leaderboard.{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+  <div class="leaderboard-container">
+
+    <!-- Header -->
+    <div class="section-header" style="margin-bottom: 2.5rem;">
+      <span class="section-tag">🏆 Rankings</span>
+      <h1 class="section-title">Global Leaderboard</h1>
+      <p class="section-subtitle">The top performers across all quiz categories.</p>
+    </div>
+
+    <!-- Podium (Top 3) -->
+    <div class="leaderboard-podium fade-in" role="list" aria-label="Top 3 performers">
+      <!-- 2nd Place -->
+      <div class="podium-item" role="listitem">
+        <div class="podium-rank silver" aria-label="2nd place">2</div>
+        <div class="lb-avatar" aria-hidden="true">{{ leaders[1].name[0] }}</div>
+        <div class="podium-name">{{ leaders[1].name }}</div>
+        <div class="podium-score">{{ leaders[1].score }}% avg</div>
+        <div class="podium-bar bar-2" aria-hidden="true"></div>
+      </div>
+
+      <!-- 1st Place -->
+      <div class="podium-item" role="listitem">
+        <div class="podium-rank gold" aria-label="1st place">1</div>
+        <div class="lb-avatar" aria-hidden="true" style="width:48px; height:48px; font-size: 1.2rem;">{{ leaders[0].name[0] }}</div>
+        <div class="podium-name">{{ leaders[0].name }}</div>
+        <div class="podium-score">{{ leaders[0].score }}% avg</div>
+        <div class="podium-bar bar-1" aria-hidden="true"></div>
+      </div>
+
+      <!-- 3rd Place -->
+      <div class="podium-item" role="listitem">
+        <div class="podium-rank bronze" aria-label="3rd place">3</div>
+        <div class="lb-avatar" aria-hidden="true">{{ leaders[2].name[0] }}</div>
+        <div class="podium-name">{{ leaders[2].name }}</div>
+        <div class="podium-score">{{ leaders[2].score }}% avg</div>
+        <div class="podium-bar bar-3" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <!-- Full Leaderboard Table -->
+    <div class="leaderboard-table fade-in" role="table" aria-label="Full leaderboard rankings">
+      <!-- Header -->
+      <div class="lb-row header" role="row">
+        <div role="columnheader">Rank</div>
+        <div role="columnheader">Player</div>
+        <div role="columnheader" style="text-align:center;">Score</div>
+        <div role="columnheader" style="text-align:center;">Quizzes</div>
+      </div>
+
+      {% for leader in leaders %}
+      <div class="lb-row" role="row">
+        <div class="lb-rank" role="cell">
+          <span aria-label="Rank {{ leader.rank }}">{{ leader.badge }}</span>
+        </div>
+        <div class="lb-user" role="cell">
+          <div class="lb-avatar" aria-hidden="true">{{ leader.name[0] }}</div>
+          <div class="lb-name">{{ leader.name }}</div>
+        </div>
+        <div class="lb-score-cell" role="cell" aria-label="{{ leader.score }}% average score">{{ leader.score }}%</div>
+        <div class="lb-quizzes" role="cell" aria-label="{{ leader.quizzes }} quizzes completed">{{ leader.quizzes }}</div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- CTA -->
+    <div class="text-center mt-3" style="margin-top: 2.5rem;">
+      <p style="color: var(--text-secondary); margin-bottom: 1rem;">Think you can make the top 5?</p>
+      <a href="{{ url_for('index') }}#quizzes" class="btn btn-primary btn-lg" id="compete-now-btn">
+        🎯 Take a Quiz Now
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

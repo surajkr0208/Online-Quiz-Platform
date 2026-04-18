@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Admin — QuizMaster{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    (function () {
+      const t = localStorage.getItem('quizplatform_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}" />
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<!-- ─── Top Nav ──────────────────────────────────────────────────── -->
+<nav class="navbar" role="navigation">
+  <a href="{{ url_for('admin_dashboard') }}" class="nav-brand">
+    <div class="nav-logo">⚙️</div>
+    <span class="nav-title">QuizMaster Admin</span>
+  </a>
+  <div class="nav-actions">
+    <a href="{{ url_for('index') }}" class="btn btn-secondary btn-sm" id="nav-view-site">🌐 View Site</a>
+    <label class="theme-toggle" for="themeToggle" aria-label="Toggle theme">
+      <input type="checkbox" id="themeToggle" />
+      <span class="toggle-track"></span>
+      <span class="toggle-thumb"></span>
+    </label>
+    <a href="{{ url_for('admin_logout') }}" class="btn btn-sm btn-danger" id="nav-logout">🚪 Logout</a>
+  </div>
+</nav>
+
+<!-- ─── Admin Layout ─────────────────────────────────────────────── -->
+<div class="admin-layout">
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar" role="navigation" aria-label="Admin navigation">
+    <div class="sidebar-label">Overview</div>
+    <ul class="sidebar-nav">
+      <li>
+        <a href="{{ url_for('admin_dashboard') }}" class="{{ 'active' if request.endpoint == 'admin_dashboard' else '' }}" id="sidebar-dashboard">
+          <span class="nav-icon">📊</span> Dashboard
+        </a>
+      </li>
+      <li>
+        <a href="{{ url_for('index') }}" id="sidebar-site">
+          <span class="nav-icon">🏠</span> Public Site
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-label">Quizzes</div>
+    <ul class="sidebar-nav">
+      <li>
+        <a href="{{ url_for('admin_new_quiz') }}" class="{{ 'active' if request.endpoint == 'admin_new_quiz' else '' }}" id="sidebar-new-quiz">
+          <span class="nav-icon">➕</span> New Quiz
+        </a>
+      </li>
+      {% set quizzes = load_quizzes() %}
+      {% for qid, quiz in quizzes.items() %}
+      <li>
+        <a href="{{ url_for('admin_quiz_questions', quiz_id=qid) }}"
+           class="{{ 'active' if request.endpoint in ['admin_quiz_questions', 'admin_add_question', 'admin_edit_question'] and request.view_args.get('quiz_id') == qid else '' }}"
+           id="sidebar-quiz-{{ qid }}"
+           title="{{ quiz.title }}">
+          <span class="nav-icon">{{ quiz.icon }}</span>
+          <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ quiz.title }}</span>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <div class="sidebar-label">Account</div>
+    <ul class="sidebar-nav">
+      <li>
+        <a href="{{ url_for('admin_logout') }}" id="sidebar-logout">
+          <span class="nav-icon">🚪</span> Logout
+        </a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="admin-main" id="admin-main-content">
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+      <div class="flash-msg {{ category }}">
+        {{ '✅' if category == 'success' else '❌' }} {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+</div>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+  // Confirm delete dialogs
+  document.querySelectorAll('.confirm-delete').forEach(btn => {
+    btn.addEventListener('click', function (e) {
+      const msg = this.dataset.confirm || 'Are you sure you want to delete this?';
+      if (!confirm(msg)) {
+        e.preventDefault();
+        const form = this.closest('form');
+        if (form) e.preventDefault();
+      }
+    });
+  });
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

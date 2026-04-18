@@ -1,0 +1,96 @@
+{% extends "admin/base.html" %}
+{% block title %}Questions — {{ quiz.title }} | Admin{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+  <div>
+    <h1 class="admin-page-title">
+      {{ quiz.icon }} {{ quiz.title }}
+    </h1>
+    <p class="admin-page-subtitle">
+      Managing {{ quiz.questions|length }} question{{ 's' if quiz.questions|length != 1 else '' }} ·
+      <span class="badge badge-difficulty badge-{{ quiz.difficulty|lower }}">{{ quiz.difficulty }}</span>
+    </p>
+  </div>
+  <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+    <a href="{{ url_for('admin_add_question', quiz_id=quiz.id) }}"
+       class="btn btn-primary" id="add-question-btn">
+      ➕ Add Question
+    </a>
+    <a href="{{ url_for('admin_edit_quiz', quiz_id=quiz.id) }}"
+       class="btn btn-secondary" id="edit-quiz-meta-btn">✏️ Edit Quiz</a>
+    <a href="{{ url_for('admin_dashboard') }}"
+       class="btn btn-secondary" id="back-to-dash-btn">← Dashboard</a>
+  </div>
+</div>
+
+<!-- Progress Bar for 25 questions target -->
+{% set q_count = quiz.questions|length %}
+{% set target = 25 %}
+{% set pct = [((q_count / target) * 100), 100]|min %}
+<div style="margin-bottom: 2rem;">
+  <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+    <span style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600;">Question Progress</span>
+    <span style="font-size: 0.82rem; color: {{ 'var(--success)' if q_count >= target else 'var(--accent)' }}; font-weight: 700;">
+      {{ q_count }}/{{ target }}
+    </span>
+  </div>
+  <div class="progress-bar-container">
+    <div class="progress-bar-fill" style="width: {{ pct }}%; background: {{ 'linear-gradient(90deg, #22c55e, #4ade80)' if q_count >= target else 'linear-gradient(90deg, #6366f1, #8b5cf6)' }};"></div>
+  </div>
+  {% if q_count < target %}
+  <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 6px;">
+    Add {{ target - q_count }} more question{{ 's' if (target - q_count) != 1 else '' }} to reach the recommended {{ target }}.
+  </p>
+  {% else %}
+  <p style="font-size: 0.8rem; color: var(--success); margin-top: 6px;">✅ Great! This quiz has {{ q_count }} questions.</p>
+  {% endif %}
+</div>
+
+<!-- Question List -->
+{% if not quiz.questions %}
+<div class="empty-state" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px;">
+  <span class="empty-state-icon">❓</span>
+  <div class="empty-state-title">No questions yet</div>
+  <p style="font-size: 0.9rem; margin-top: 0.5rem;">
+    <a href="{{ url_for('admin_add_question', quiz_id=quiz.id) }}" style="color: var(--accent);">Add your first question</a>
+  </p>
+</div>
+{% else %}
+<div class="question-list">
+  {% for q in quiz.questions %}
+  <div class="question-item" id="question-item-{{ q.id }}">
+    <div class="question-number-badge">{{ loop.index }}</div>
+    <div class="question-item-content">
+      <div class="question-item-text">{{ q.question }}</div>
+      <div class="question-options-preview">
+        {% for i, opt in enumerate(q.options) %}
+        <span class="option-preview {{ 'is-correct' if i == q.answer else '' }}">
+          {{ ['A', 'B', 'C', 'D'][i] }}. {{ opt }}
+        </span>
+        {% endfor %}
+      </div>
+      <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 6px; font-style: italic;">
+        💡 {{ q.explanation[:100] }}{{ '...' if q.explanation|length > 100 else '' }}
+      </p>
+    </div>
+    <div class="question-item-actions">
+      <a href="{{ url_for('admin_edit_question', quiz_id=quiz.id, q_id=q.id) }}"
+         class="btn btn-sm btn-edit" id="edit-q-{{ q.id }}">✏️</a>
+      <form method="POST" action="{{ url_for('admin_delete_question', quiz_id=quiz.id, q_id=q.id) }}" style="display: inline;">
+        <button type="submit" class="btn btn-sm btn-danger confirm-delete"
+                data-confirm="Delete this question? This cannot be undone."
+                id="delete-q-{{ q.id }}">🗑️</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<div style="text-align: center; margin-top: 2rem;">
+  <a href="{{ url_for('admin_add_question', quiz_id=quiz.id) }}" class="btn btn-primary" id="add-more-btn">
+    ➕ Add Another Question
+  </a>
+</div>
+{% endif %}
+{% endblock %}

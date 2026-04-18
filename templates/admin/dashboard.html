@@ -1,0 +1,102 @@
+{% extends "admin/base.html" %}
+{% block title %}Dashboard — QuizMaster Admin{% endblock %}
+
+{% block content %}
+<div class="admin-page-header">
+  <div>
+    <h1 class="admin-page-title">📊 Dashboard</h1>
+    <p class="admin-page-subtitle">Manage all quizzes and questions from here.</p>
+  </div>
+  <a href="{{ url_for('admin_new_quiz') }}" class="btn btn-primary" id="dash-new-quiz-btn">
+    ➕ New Quiz
+  </a>
+</div>
+
+<!-- Stats -->
+<div class="admin-stats">
+  <div class="admin-stat-card">
+    <span class="admin-stat-icon">📚</span>
+    <span class="admin-stat-value">{{ quizzes|length }}</span>
+    <span class="admin-stat-label">Total Quizzes</span>
+  </div>
+  <div class="admin-stat-card">
+    <span class="admin-stat-icon">❓</span>
+    <span class="admin-stat-value">{{ total_questions }}</span>
+    <span class="admin-stat-label">Total Questions</span>
+  </div>
+  <div class="admin-stat-card">
+    <span class="admin-stat-icon">🎯</span>
+    <span class="admin-stat-value">{{ (total_questions / quizzes|length)|int if quizzes|length > 0 else 0 }}</span>
+    <span class="admin-stat-label">Avg Questions/Quiz</span>
+  </div>
+  <div class="admin-stat-card">
+    <span class="admin-stat-icon">⚡</span>
+    <span class="admin-stat-value">{{ quizzes.values()|selectattr('difficulty', 'equalto', 'Advanced')|list|length }}</span>
+    <span class="admin-stat-label">Advanced Quizzes</span>
+  </div>
+</div>
+
+<!-- Quizzes Table -->
+<div class="admin-table-wrapper">
+  {% if not quizzes %}
+  <div class="empty-state">
+    <span class="empty-state-icon">📭</span>
+    <div class="empty-state-title">No quizzes yet</div>
+    <p style="font-size: 0.9rem; margin-top: 0.5rem;">
+      <a href="{{ url_for('admin_new_quiz') }}" style="color: var(--accent);">Create your first quiz</a>
+    </p>
+  </div>
+  {% else %}
+  <table class="admin-table" role="table">
+    <thead>
+      <tr>
+        <th>Quiz</th>
+        <th>Category</th>
+        <th>Difficulty</th>
+        <th>Questions</th>
+        <th>Time/Q</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for quiz_id, quiz in quizzes.items() %}
+      <tr>
+        <td>
+          <div class="quiz-title-cell">
+            <div class="quiz-icon-cell" style="background: {{ quiz.color }}15;">{{ quiz.icon }}</div>
+            <div>
+              <div class="quiz-name">{{ quiz.title }}</div>
+              <div class="quiz-id-text">{{ quiz.id }}</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="badge badge-category">{{ quiz.category }}</span></td>
+        <td><span class="badge badge-difficulty badge-{{ quiz.difficulty|lower }}">{{ quiz.difficulty }}</span></td>
+        <td>
+          <span class="q-count-badge">
+            ❓ {{ quiz.questions|length }}
+          </span>
+        </td>
+        <td style="color: var(--text-secondary);">{{ quiz.time_per_question }}s</td>
+        <td>
+          <div class="action-btns">
+            <a href="{{ url_for('admin_quiz_questions', quiz_id=quiz.id) }}"
+               class="btn btn-sm btn-edit" id="manage-q-{{ quiz.id }}">📋 Questions</a>
+            <a href="{{ url_for('admin_edit_quiz', quiz_id=quiz.id) }}"
+               class="btn btn-sm btn-secondary" id="edit-{{ quiz.id }}">✏️ Edit</a>
+            <form method="POST" action="{{ url_for('admin_delete_quiz', quiz_id=quiz.id) }}" style="display: inline;">
+              <button type="submit" class="btn btn-sm btn-danger confirm-delete"
+                      data-confirm="Delete quiz '{{ quiz.title }}' and all its questions? This cannot be undone."
+                      id="delete-{{ quiz.id }}">🗑️</button>
+            </form>
+            <a href="{{ url_for('quiz_intro', quiz_id=quiz.id) }}" target="_blank"
+               class="btn btn-sm btn-secondary" id="preview-{{ quiz.id }}" title="Preview quiz">👁️</a>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+</div>
+{% endblock %}
