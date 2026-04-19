@@ -1,0 +1,20 @@
+{
+  "abc_123": {
+    "username": "abc_123",
+    "email": "surajkumarmahto7033@gmail.com",
+    "password_hash": "scrypt:32768:8:1$AF0BS38E9rQunLFc$243653547688def62c4910951d0dce0892647e308940ce46097356e0a24bd9f87d34a6741e805079af077c74524aa9ad471ebb0c95004d8f299079304b681c51",
+    "created_at": "2026-04-19T11:57:41.049798"
+  },
+  "xyz_123": {
+    "username": "xyz_123",
+    "email": "surajrt70@gmail.com",
+    "password_hash": "scrypt:32768:8:1$MWpHuxkWhapCJX1H$ee922b4299faab7db6f02b58fac845d9c87cb1397783251b2e19ff139d4a8467d770e6b23538a49d728d278b623b7b0dfc6417ecbb6a7f6fb3f0db5fb8ac16d1",
+    "created_at": "2026-04-19T12:20:42.247495"
+  },
+  "Genius": {
+    "username": "Genius",
+    "email": "surajkumar020805@gmail.com",
+    "password_hash": "scrypt:32768:8:1$wlwqOUS06TFBNxGT$b87d4ffbdb45f95d454267264a580764da24fc1abd77f3416bf9efb1fe249a9873d5485e6267d6a16c8aea12a57e0b76ceb12bcb4da698f00e09af51912c4714",
+    "created_at": "2026-04-19T12:23:27.539586"
+  }
+}

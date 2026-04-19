@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Sign Up — QuizMaster{% endblock %}
+
+{% block content %}
+<div class="page-wrapper" style="min-height: calc(100vh - 140px); display: flex; align-items: center; justify-content: center; padding-top: 2rem; padding-bottom: 2rem;">
+  <div class="admin-form-card fade-in" style="width: 100%; max-width: 480px; padding: 3rem;">
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <h1 class="section-title" style="font-size: 1.8rem; margin-bottom: 0.5rem;">Create Account ✨</h1>
+      <p class="section-subtitle">Join QuizMaster to compete on the global leaderboard.</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+      <div class="flash-msg {{ category }}">
+        {{ '✅' if category == 'success' else '❌' }} {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('register', next=request.args.get('next', '')) }}" id="user-register-form">
+      <div class="form-group">
+        <label for="username">👤 Username <span class="req">*</span></label>
+        <input type="text" class="form-control" id="username" name="username"
+               value="{{ form_data.get('username', '') }}"
+               placeholder="Letters, numbers, underscores only" required autofocus />
+      </div>
+
+      <div class="form-group">
+        <label for="email">📧 Email Address <span class="req">*</span></label>
+        <input type="email" class="form-control" id="email" name="email"
+               value="{{ form_data.get('email', '') }}"
+               placeholder="you@example.com" required />
+      </div>
+
+      <div class="form-group">
+        <label for="password">🔑 Password <span class="req">*</span></label>
+        <input type="password" class="form-control" id="password" name="password"
+               placeholder="At least 6 characters" required />
+      </div>
+
+      <div class="form-group">
+        <label for="confirm_password">🔐 Confirm Password <span class="req">*</span></label>
+        <input type="password" class="form-control" id="confirm_password" name="confirm_password"
+               placeholder="Must match password above" required />
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 1rem;">
+        Sign Up
+      </button>
+    </form>
+
+    <div style="text-align: center; margin-top: 2rem; font-size: 0.9rem; color: var(--text-muted);">
+      Already have an account? <a href="{{ url_for('user_login', next=request.args.get('next', '')) }}" style="color: var(--accent); font-weight: 600;">Log in</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

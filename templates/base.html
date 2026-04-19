@@ -36,6 +36,12 @@
       <li><a href="{{ url_for('index') }}" class="{{ 'active' if request.endpoint == 'index' else '' }}" id="nav-home">Home</a></li>
       <li><a href="{{ url_for('leaderboard') }}" class="{{ 'active' if request.endpoint == 'leaderboard' else '' }}" id="nav-leaderboard">Leaderboard</a></li>
       <li><a href="{{ url_for('about') }}" class="{{ 'active' if request.endpoint == 'about' else '' }}" id="nav-about">About</a></li>
+      {% if session.get('user') %}
+      <li><a href="{{ url_for('user_logout') }}" id="nav-logout">Logout ({{ session.get('user') }})</a></li>
+      {% else %}
+      <li><a href="{{ url_for('user_login') }}" class="{{ 'active' if request.endpoint == 'user_login' else '' }}" id="nav-login">Log In</a></li>
+      <li><a href="{{ url_for('register') }}" class="{{ 'active' if request.endpoint == 'register' else '' }}" id="nav-register">Sign Up</a></li>
+      {% endif %}
       <li><a href="{{ url_for('admin_root') }}" class="{{ 'active' if request.endpoint and request.endpoint.startswith('admin') else '' }}" id="nav-admin">⚙️ Admin</a></li>
     </ul>
 

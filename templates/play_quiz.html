@@ -51,10 +51,15 @@
     </div>
 
     <!-- Next Button -->
-    <div class="quiz-nav-btns">
+    <div class="quiz-nav-btns" style="gap: 1rem;">
       <button class="btn btn-primary" id="nextBtn" onclick="goNext()" style="display: none;" aria-label="Go to next question">
         Next Question →
       </button>
+      {% if question_number < total_questions %}
+      <a href="{{ url_for('quiz_results', quiz_id=quiz.id) }}" class="btn btn-secondary" id="submitEarlyBtn" style="display: inline-flex; border-color: #ef4444; color: #ef4444;" aria-label="Submit Quiz Early" onclick="return confirm('Are you sure you want to submit the quiz early? Unanswered questions will not be scored.');" onmouseover="this.style.background='#ef4444'; this.style.color='white';" onmouseout="this.style.background='var(--bg-card)'; this.style.color='#ef4444';">
+        🛑 Submit Early
+      </a>
+      {% endif %}
       <a href="{{ url_for('quiz_results', quiz_id=quiz.id) }}" class="btn btn-primary" id="finishBtn" style="display: none;" aria-label="View your results">
         🏆 View Results
       </a>

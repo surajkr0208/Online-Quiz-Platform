@@ -1,0 +1,32 @@
+[
+  {
+    "id": "339632bb-4c79-40fe-9e5f-d469989ffab2",
+    "username": "abc_123",
+    "quiz_id": "python-basics",
+    "quiz_title": "Python Basics",
+    "score": 2,
+    "total": 25,
+    "percentage": 8,
+    "timestamp": "2026-04-19T12:09:55.485692"
+  },
+  {
+    "id": "b1d83cf9-0fea-4b57-9239-abaf319be7b0",
+    "username": "xyz_123",
+    "quiz_id": "general-knowledge",
+    "quiz_title": "General Knowledge",
+    "score": 6,
+    "total": 25,
+    "percentage": 24,
+    "timestamp": "2026-04-19T12:22:00.622622"
+  },
+  {
+    "id": "b7ffd014-d2be-4de0-9ac8-6bbb3c981e60",
+    "username": "Genius",
+    "quiz_id": "python-basics",
+    "quiz_title": "Python Basics",
+    "score": 7,
+    "total": 25,
+    "percentage": 28,
+    "timestamp": "2026-04-19T12:28:48.709409"
+  }
+]
